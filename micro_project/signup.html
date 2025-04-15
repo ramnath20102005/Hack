@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #6a0dad, #4b0082);
+            background-size: 400% 400%;
+            animation: gradientBG 8s ease infinite;
+            color: white;
+            overflow: hidden;
+            padding: 20px;
+            position: relative;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+            overflow: hidden;
+            transform: translateY(-10px);
+            transition: transform 0.3s ease-in-out;
+        }
+        .container:hover {
+            transform: translateY(0);
+        }
+        .role-selection {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 15px;
+        }
+        .role-selection button {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            width: 45%;
+            transition: background 0.3s, transform 0.2s;
+        }
+        .role-selection button.active {
+            background-color: white;
+            color: #4b0082;
+        }
+        .role-selection button:hover {
+            transform: scale(1.1);
+        }
+        .form-container {
+            display: flex;
+            width: 200%;
+            transition: transform 0.5s ease-in-out;
+        }
+        .form-section {
+            width: 50%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        input, button {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            transition: box-shadow 0.3s, transform 0.2s;
+        }
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        input:focus {
+            outline: none;
+            box-shadow: 0px 0px 12px rgba(255, 255, 255, 0.8);
+            transform: scale(1.05);
+        }
+        .error {
+            color: #ffcccb;
+            font-size: 12px;
+            display: none;
+        }
+        button.submit {
+            background-color: white;
+            color: #4b0082;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+            transition: background 0.3s, transform 0.2s;
+        }
+        button.submit:hover {
+            background-color: #d8b6ff;
+            transform: scale(1.05);
+        }
+        a {
+            color: #d8b6ff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 600px) {
+            .container {
+                width: 100%;
+                padding: 15px;
+            }
+            input, button {
+                font-size: 14px;
+                padding: 10px;
+            }
+            .role-selection button {
+                font-size: 14px;
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Sign Up</h2>
+        <div class="role-selection">
+            <button id="studentBtn" class="active" onclick="selectRole('student')">Student</button>
+            <button id="instructorBtn" onclick="selectRole('instructor')">Instructor</button>
+        </div>
+        <div class="form-container" id="formContainer">
+            <div class="form-section" id="studentForm">
+                <input type="text" id="studentUsername" placeholder="Student Username">
+                <div class="error" id="studentUsernameError">Only letters allowed</div>
+                <input type="email" id="studentEmail" placeholder="Email">
+                <div class="error" id="studentEmailError">Invalid email format</div>
+                <input type="password" id="studentPassword" placeholder="Password">
+                <div class="error" id="studentPasswordError">Minimum 8 chars, no spaces, must include letters, numbers, and special chars</div>
+                <button class="submit" onclick="validateForm('student')">Sign Up as Student</button>
+            </div>
+        </div>
+        <p>Already have an account? <a href="login.html">Login</a></p>
+    </div>
+    <script>
+        function selectRole(role) {
+            document.getElementById('studentBtn').classList.remove('active');
+            document.getElementById('instructorBtn').classList.remove('active');
+            document.getElementById(`${role}Btn`).classList.add('active');
+            document.querySelectorAll('.error').forEach(error => error.style.display = 'none');
+        }
+        function validateForm(role) {
+            let username = document.getElementById(role + 'Username').value;
+            let email = document.getElementById(role + 'Email').value;
+            let password = document.getElementById(role + 'Password').value;
+            let usernameError = document.getElementById(role + 'UsernameError');
+            let emailError = document.getElementById(role + 'EmailError');
+            let passwordError = document.getElementById(role + 'PasswordError');
+            usernameError.style.display = /^[a-zA-Z]+$/.test(username) ? 'none' : 'block';
+            emailError.style.display = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? 'none' : 'block';
+            passwordError.style.display = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password) ? 'none' : 'block';
+        }
+    </script>
+</body>
+</html>

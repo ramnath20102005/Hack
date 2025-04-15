@@ -5,7 +5,7 @@ const userSchema = mongoose.Schema(
   {
     name: {
       type: String,
-      default: "",
+      required: true,
     },
     email: {
       type: String,
@@ -16,9 +16,14 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    profileImage: { // Rename this field to match the backend logic
+    role: {
       type: String,
-      default: "https://via.placeholder.com/150", // Default image URL
+      enum: ['student', 'instructor'],
+      required: true,
+    },
+    profileImage: {
+      type: String,
+      default: null, // No default image, will be handled by frontend
     },
     bio: {
       type: String,

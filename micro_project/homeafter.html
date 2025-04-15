@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn-E - Home</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #6a0dad, #4b0082);
+            color: white;
+            overflow-x: hidden;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        /* Fade-in Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Blinking Text with Glow */
+        @keyframes blinkGlow {
+            0%, 100% { opacity: 1; text-shadow: 0px 0px 10px white; }
+            50% { opacity: 0.4; text-shadow: 0px 0px 5px white; }
+        }
+
+        /* Navbar */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        /* Logo */
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        /* Search Bar */
+        .search-box {
+            flex: 1;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 20px;
+            border: none;
+            font-size: 16px;
+            outline: none;
+            text-align: center;
+            transition: box-shadow 0.3s;
+        }
+
+        .search-box input:focus {
+            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.5);
+        }
+
+        /* Menu Button (Shifted Left by 25px) */
+        .menu-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 10px 20px;
+            transition: transform 0.3s ease-in-out;
+            margin-left: -25px;
+            margin-right: 20px;
+        }
+
+        .menu-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            width: 250px;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .sidebar.show {
+            transform: translateX(0);
+        }
+
+        .menu a {
+            display: block;
+            color: white;
+            padding: 12px;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s, transform 0.3s;
+            animation: blinkGlow 2s infinite;
+        }
+
+        .menu a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        /* Main Content */
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 80px;
+            padding: 20px;
+        }
+
+        /* Titles Blinking with Glow */
+        h2 {
+            animation: blinkGlow 1.5s infinite;
+        }
+
+        /* Recommended Courses */
+        .courses-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            width: 90%;
+            max-width: 1200px;
+        }
+
+        .course-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            width: 250px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            animation: shrinkExpand 2s infinite alternate;
+        }
+
+        /* Shrinking & Expanding Animation */
+        @keyframes shrinkExpand {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+
+        .course-card:hover {
+            transform: scale(1.05);
+        }
+
+        /* Video Section */
+        .video-section {
+            margin-top: 30px;
+            width: 90%;
+            max-width: 900px;
+        }
+
+        .video-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            justify-content: center;
+        }
+
+        video {
+            width: 100%;
+            max-width: 300px;
+            border-radius: 10px;
+        }
+
+        /* Footer */
+        .footer {
+            background: rgba(0, 0, 0, 0.4);
+            color: white;
+            text-align: center;
+            padding: 15px;
+            font-size: 14px;
+            margin-top: 30px;
+        }
+
+        .footer a {
+            color: #d8b6ff;
+            text-decoration: none;
+            margin: 0 5px;
+            transition: color 0.3s;
+        }
+
+        .footer a:hover {
+            color: white;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .search-box {
+                display: none;
+            }
+
+            .video-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">📚 Learn-E</div>
+        <div class="search-box">
+            <input type="text" placeholder="Search for courses...">
+        </div>
+        <button class="menu-btn" onclick="toggleSidebar()">☰ Menu</button>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="menu">
+            <a href="#">🏠 Home</a>
+            <a href="#">📚 Courses</a>
+            
+            <a href="profile.html">👤 Profile</a>
+            <a href="#">📩 Contact</a>
+            <a href="home.html">🚪 Logout</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+
+        <h2>Recommended Courses</h2>
+
+        <div class="courses-container">
+            <div class="course-card">HTML Basics</div>
+            <div class="course-card">CSS Fundamentals</div>
+            <div class="course-card">JavaScript Essentials</div>
+            <div class="course-card">Node.js Beginner</div>
+            <div class="course-card">React Advanced</div>
+            <div class="course-card">Python for Web</div>
+            <div class="course-card">SQL Database</div>
+            <div class="course-card">AI & Machine Learning</div>
+            <div class="course-card">Cyber Security Basics</div>
+            <div class="course-card">Digital Marketing</div>
+        </div>
+
+        <!-- Video Section -->
+        <div class="video-section">
+            <h2>Video Tutorials</h2>
+            <div class="video-container">
+                <video controls src="sample1.mp4"></video>
+                <video controls src="sample2.mp4"></video>
+                <video controls src="sample3.mp4"></video>
+                <video controls src="sample4.mp4"></video>
+                <video controls src="sample5.mp4"></video>
+                <video controls src="sample6.mp4"></video>
+                <video controls src="sample7.mp4"></video>
+                <video controls src="sample8.mp4"></video>
+                <video controls src="sample9.mp4"></video>
+            </div>
+        </div>
+    </div>
+    <!-- Footer -->
+    <div class="footer">
+        © 2025 Learn-E. All rights reserved.
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById("sidebar").classList.toggle("show");
+        }
+    </script>
+
+</body>
+</html>

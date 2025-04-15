@@ -8,4 +8,4 @@ router.post('/signup', signup);
 // Login route
 router.post('/login', login);
 
-module.exports = router;
+module.exports = router; // ✅ Ensure you export the router

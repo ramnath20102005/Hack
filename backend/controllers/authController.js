@@ -6,7 +6,7 @@ const generateToken = require('../utils/generateToken');
 // @route   POST /api/auth/signup
 // @access  Public
 const signup = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+  const { name, email, password, role } = req.body;
 
   // Check if user already exists
   const userExists = await User.findOne({ email });
@@ -17,14 +17,18 @@ const signup = asyncHandler(async (req, res) => {
 
   // Create user
   const user = await User.create({
+    name,
     email,
     password,
+    role,
   });
 
   if (user) {
     res.status(201).json({
       _id: user._id,
+      name: user.name,
       email: user.email,
+      role: user.role,
       token: generateToken(user._id),
     });
   } else {
@@ -46,6 +50,7 @@ const login = asyncHandler(async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
+      role: user.role,
       skills: user.skills,
       interests: user.interests,
       token: generateToken(user._id),

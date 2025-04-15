@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn-E - Welcome</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #6a0dad, #4b0082);
+            color: white;
+            overflow-x: hidden;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        /* Fade In Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px 30px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        .header .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        /* Main Content */
+        .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 100px auto 0;
+            padding: 20px;
+            gap: 50px;
+        }
+
+        .left-section, .right-section {
+            flex: 1;
+            padding: 20px;
+        }
+
+        /* Left Section */
+        .left-section h1 {
+            font-size: 42px;
+            margin-bottom: 15px;
+            animation: slideInLeft 1s ease-in-out;
+        }
+
+        .left-section p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        /* Image */
+        .image-container img {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 10px;
+            animation: floatUp 3s infinite ease-in-out alternate;
+        }
+
+        @keyframes floatUp {
+            from { transform: translateY(0px); }
+            to { transform: translateY(-10px); }
+        }
+
+        /* Right Section */
+        .right-section h2 {
+            font-size: 30px;
+            animation: slideInRight 1s ease-in-out;
+        }
+
+        /* Buttons */
+        .buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .buttons a {
+            text-decoration: none;
+            background: white;
+            color: #4b0082;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-size: 18px;
+            transition: transform 0.2s, background 0.3s, box-shadow 0.3s;
+        }
+
+        .buttons a:hover {
+            background: #d8b6ff;
+            transform: scale(1.05);
+            box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.5);
+        }
+
+        /* Categories & Trending Courses */
+        .categories, .trending-courses {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+            font-size: 18px;
+            justify-content: center;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .categories span, .trending-courses span {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .categories span:hover, .trending-courses span:hover {
+            transform: scale(1.1);
+        }
+
+        /* Tutor Section */
+        .become-tutor {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        /* Animations */
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .container {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+
+            .left-section, .right-section {
+                width: 100%;
+                padding: 10px;
+            }
+
+            .buttons {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 10px 20px;
+            }
+
+            .header .logo {
+                font-size: 20px;
+            }
+
+            .left-section h1 {
+                font-size: 36px;
+            }
+
+            .right-section h2 {
+                font-size: 26px;
+            }
+
+            .buttons a {
+                font-size: 16px;
+                padding: 10px 20px;
+            }
+        }
+       /* Footer Styles */
+    .footer {
+        background: rgba(0, 0, 0, 0.4);
+        color: white;
+        text-align: center;
+        padding: 10px;
+        font-size: 14px;
+        position: relative;
+        width: 100%;
+        backdrop-filter: blur(5px);
+    }
+
+    .footer a {
+        color: #d8b6ff;
+        text-decoration: none;
+        margin: 0 5px;
+        transition: color 0.3s;
+    }
+
+    .footer a:hover {
+        color: white;
+    }
+
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">📚 Learn-E</div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+
+        <!-- Left Section -->
+        <div class="left-section">
+            <h1>Welcome to Learn-E</h1>
+            <p>Your go-to platform for interactive and efficient e-learning.</p>
+            <div class="image-container">
+                <img src="elearn.avif" alt="Learning Theme Image">
+            </div>
+        </div>
+
+        <!-- Right Section -->
+        <div class="right-section">
+            <h2>Get Started</h2>
+            <p>Sign up or log in to begin your learning journey with us.</p>
+            <div class="buttons">
+                <a href="signup.html">Sign Up</a>
+                <a href="login.html">Login</a>
+            </div>
+            <div class="become-tutor">
+                <h3>Become a Tutor</h3>
+                <p>Share your knowledge and teach students worldwide.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Categories -->
+    <div class="categories">
+        <p><strong>Why Choose Learn-E?</strong></p>
+        <span>📚 Interactive Learning</span>
+        <span>📈 Career Growth</span>
+        <span>👩‍🏫 Expert Tutors</span>
+    </div>
+
+    <!-- Trending Courses -->
+    <div class="trending-courses">
+        <p><strong>Popular Courses:</strong></p>
+        <span>HTML</span>
+        <span>CSS</span>
+        <span>React</span>
+        <span>Node.js</span>
+    </div>
+    <footer class="footer">
+        <p>© 2025 Learn-E. All Rights Reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+    </footer>
+</body>
+</html>

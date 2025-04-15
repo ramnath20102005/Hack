@@ -1,86 +1,149 @@
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #6a0dad, #4b0082);
+  background-size: 400% 400%;
+  animation: gradientBG 8s ease infinite;
+  color: white;
+  overflow: hidden;
+  padding: 20px;
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
 /* Auth Container */
 .auth-container {
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
   min-height: 100vh;
   padding: 20px;
 }
 
 /* Auth Card */
 .auth-card {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(10px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  padding: 30px;
-  width: 100%;
-  max-width: 400px;
+  color: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.5);
   text-align: center;
-  animation: fadeIn 1s ease-in-out;
+  width: 90%;
+  max-width: 400px;
+  position: relative;
+  overflow: hidden;
+  transform: translateY(-10px);
+  transition: transform 0.3s ease-in-out;
+}
+
+.auth-card:hover {
+  transform: translateY(0);
 }
 
 /* Auth Title */
 .auth-title {
-  color: #1e90ff;
   margin-bottom: 20px;
-  font-size: 2rem;
   font-weight: bold;
-}
-
-/* Auth Subtitle */
-.auth-subtitle {
-  color: #ffffff;
-  margin-bottom: 20px;
-  font-size: 1rem;
 }
 
 /* Auth Input Fields */
 .auth-input {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 5px;
-  padding: 10px;
-  width: 100%;
-  color: #ffffff;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  background: rgba(255, 255, 255, 0.3) !important;
+  color: white !important;
+  border: none !important;
+  transition: box-shadow 0.3s, transform 0.2s !important;
 }
 
 .auth-input:focus {
-  border-color: #1e90ff;
-  box-shadow: 0 0 15px rgba(30, 144, 255, 0.7);
+  box-shadow: 0px 0px 12px rgba(255, 255, 255, 0.8) !important;
+  transform: scale(1.05) !important;
+}
+
+.auth-input::placeholder {
+  color: rgba(255, 255, 255, 0.7) !important;
 }
 
 /* Auth Button */
 .auth-button {
-  background: #1e90ff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  color: #ffffff;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background 0.3s ease, transform 0.3s ease;
+  background-color: white !important;
+  color: #4b0082 !important;
+  border: none !important;
+  cursor: pointer !important;
+  font-size: 16px !important;
+  border-radius: 5px !important;
+  transition: background 0.3s, transform 0.2s !important;
+  width: 100% !important;
+  margin-top: 10px !important;
 }
 
 .auth-button:hover {
-  background: #7b68ee;
-  transform: scale(1.05);
+  background-color: #d8b6ff !important;
+  transform: scale(1.05) !important;
 }
 
 /* Auth Footer */
 .auth-footer {
   margin-top: 20px;
-  color: #ffffff;
 }
 
 .auth-footer a {
-  color: #1e90ff;
+  color: #d8b6ff;
   text-decoration: none;
-  font-weight: bold;
 }
 
 .auth-footer a:hover {
   text-decoration: underline;
+}
+
+.role-selection {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 15px;
+}
+
+.role-selection button {
+  background-color: transparent !important;
+  color: white !important;
+  border: 2px solid white !important;
+  padding: 10px !important;
+  cursor: pointer !important;
+  border-radius: 5px !important;
+  width: 45% !important;
+  transition: background 0.3s, transform 0.2s !important;
+}
+
+.role-selection button.active {
+  background-color: white !important;
+  color: #4b0082 !important;
+}
+
+.role-selection button:hover {
+  transform: scale(1.1) !important;
+}
+
+@media (max-width: 600px) {
+  .auth-card {
+    width: 100%;
+    padding: 15px;
+  }
+  
+  .auth-input, .auth-button {
+    font-size: 14px !important;
+    padding: 10px !important;
+  }
+  
+  .role-selection button {
+    font-size: 14px !important;
+    padding: 8px !important;
+  }
 }

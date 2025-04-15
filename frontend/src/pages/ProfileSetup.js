@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import api from '../services/api';
-import '../Auth.css';
+import { FaUser, FaCode, FaLightbulb } from 'react-icons/fa';
+import './ProfileSetup.css';
 
 const ProfileSetup = () => {
-  const [name, setName] = useState('');
-  const [skills, setSkills] = useState('');
-  const [interests, setInterests] = useState('');
+  const [formData, setFormData] = useState({
+    name: '',
+    skills: '',
+    interests: '',
+    bio: ''
+  });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
@@ -19,72 +22,133 @@ const ProfileSetup = () => {
     }
   }, [navigate]);
 
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
       const profileData = {
-        name,
-        skills: skills.split(','), // Convert to array
-        interests: interests.split(','), // Convert to array
+        name: formData.name,
+        skills: formData.skills.split(',').map(s => s.trim()).filter(s => s), // Convert to array and remove empty
+        interests: formData.interests.split(',').map(s => s.trim()).filter(s => s), // Convert to array and remove empty
+        bio: formData.bio
       };
-      await api.updateProfile(profileData, token);
-      setSuccess('Profile updated successfully');
-      localStorage.removeItem('token');
-      navigate('/login');
+
+      const response = await fetch('http://localhost:5000/api/profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(profileData)
+      });
+
+      if (response.ok) {
+        setSuccess('Profile updated successfully');
+        setTimeout(() => {
+          navigate('/profile');
+        }, 1500);
+      } else {
+        const data = await response.json();
+        setError(data.message || 'Failed to update profile');
+      }
     } catch (err) {
-      setError('Failed to update profile');
+      setError('Failed to connect to server');
     }
   };
 
   const handleSkip = () => {
-    localStorage.removeItem('token');
-    navigate('/login');
+    navigate('/profile');
   };
 
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h2 className="auth-title">Profile Setup</h2>
-        <p className="auth-subtitle">You can fill these details now or skip to do it later.</p>
+        <h2 className="auth-title">Complete Your Profile</h2>
+        <p className="auth-subtitle">Tell us more about yourself to get started</p>
+        
         {error && <Alert variant="danger">{error}</Alert>}
         {success && <Alert variant="success">{success}</Alert>}
+        
         <Form onSubmit={handleSubmit}>
-          <Form.Group controlId="name" className="mb-3">
-            <Form.Label>Name</Form.Label>
+          <Form.Group className="form-group">
+            <Form.Label>
+              <FaUser className="me-2" />
+              Full Name
+            </Form.Label>
             <Form.Control
               type="text"
-              placeholder="Enter name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              name="name"
+              placeholder="Enter your full name"
+              value={formData.name}
+              onChange={handleChange}
+              className="auth-input"
+              required
+            />
+          </Form.Group>
+
+          <Form.Group className="form-group">
+            <Form.Label>
+              <FaCode className="me-2" />
+              Skills
+            </Form.Label>
+            <Form.Control
+              type="text"
+              name="skills"
+              placeholder="Enter your skills (comma-separated)"
+              value={formData.skills}
+              onChange={handleChange}
+              className="auth-input"
+            />
+            <Form.Text className="text-muted">
+              Example: React, Node.js, Python, Data Analysis
+            </Form.Text>
+          </Form.Group>
+
+          <Form.Group className="form-group">
+            <Form.Label>
+              <FaLightbulb className="me-2" />
+              Interests
+            </Form.Label>
+            <Form.Control
+              type="text"
+              name="interests"
+              placeholder="Enter your interests (comma-separated)"
+              value={formData.interests}
+              onChange={handleChange}
+              className="auth-input"
+            />
+            <Form.Text className="text-muted">
+              Example: Web Development, Machine Learning, UI/UX Design
+            </Form.Text>
+          </Form.Group>
+
+          <Form.Group className="form-group">
+            <Form.Label>
+              Bio
+            </Form.Label>
+            <Form.Control
+              as="textarea"
+              name="bio"
+              rows={4}
+              placeholder="Tell us about yourself..."
+              value={formData.bio}
+              onChange={handleChange}
               className="auth-input"
             />
           </Form.Group>
-          <Form.Group controlId="skills" className="mb-3">
-            <Form.Label>Skills (comma-separated)</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Enter skills"
-              value={skills}
-              onChange={(e) => setSkills(e.target.value)}
-              className="auth-input"
-            />
-          </Form.Group>
-          <Form.Group controlId="interests" className="mb-3">
-            <Form.Label>Interests (comma-separated)</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Enter interests"
-              value={interests}
-              onChange={(e) => setInterests(e.target.value)}
-              className="auth-input"
-            />
-          </Form.Group>
-          <Button variant="primary" type="submit" className="auth-button">
-            Save
+
+          <Button type="submit" className="auth-button">
+            Save Profile
           </Button>
           <Button variant="secondary" onClick={handleSkip} className="auth-button">
-            Skip for Later
+            Skip for Now
           </Button>
         </Form>
       </div>

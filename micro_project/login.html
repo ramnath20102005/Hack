@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #6a0dad, #4b0082);
+            background-size: 400% 400%;
+            animation: gradientBG 8s ease infinite;
+            color: white;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .role-selection {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 15px;
+        }
+
+        .role-selection button {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            width: 45%;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .role-selection button.active {
+            background-color: white;
+            color: #4b0082;
+        }
+
+        .role-selection button:hover {
+            transform: scale(1.1);
+        }
+
+        .form-wrapper {
+            width: 200%;
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .form-section {
+            width: 50%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        input, button {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            transition: box-shadow 0.3s, transform 0.2s;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        input:focus {
+            outline: none;
+            box-shadow: 0px 0px 12px rgba(255, 255, 255, 0.8);
+            transform: scale(1.05);
+        }
+
+        .error {
+            color: #ffcccb;
+            font-size: 12px;
+            display: none;
+        }
+
+        button.submit {
+            background-color: white;
+            color: #4b0082;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        button.submit:hover {
+            background-color: #d8b6ff;
+            transform: scale(1.05);
+        }
+
+        a {
+            color: #d8b6ff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                width: 100%;
+                padding: 15px;
+            }
+            input, button {
+                font-size: 14px;
+                padding: 10px;
+            }
+            .role-selection button {
+                font-size: 14px;
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Login</h2>
+
+        <!-- Role Selection -->
+        <div class="role-selection">
+            <button id="studentBtn" class="active" onclick="selectRole('student')">Student</button>
+            <button id="instructorBtn" onclick="selectRole('instructor')">Instructor</button>
+        </div>
+
+        <!-- Form Container -->
+        <div class="form-wrapper" id="formWrapper">
+            <div class="form-section" id="studentForm">
+                <input type="text" id="studentUsername" placeholder="Student Username">
+                <div class="error" id="studentUsernameError">Only letters allowed</div>
+                <input type="password" id="studentPassword" placeholder="Password">
+                <div class="error" id="studentPasswordError">Minimum 8 chars, no spaces, must include letters, numbers, and special chars</div>
+                <button class="submit" onclick="validateForm('student')">Login as Student</button>
+            </div>
+
+            <div class="form-section" id="instructorForm">
+                <input type="text" id="instructorUsername" placeholder="Instructor Username">
+                <div class="error" id="instructorUsernameError">Only letters allowed</div>
+                <input type="password" id="instructorPassword" placeholder="Password">
+                <div class="error" id="instructorPasswordError">Minimum 8 chars, no spaces, must include letters, numbers, and special chars</div>
+                <button class="submit" onclick="validateForm('instructor')">Login as Instructor</button>
+            </div>
+        </div>
+
+        <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
+    </div>
+
+    <script>
+        function selectRole(role) {
+            // Activate the selected button
+            document.getElementById('studentBtn').classList.remove('active');
+            document.getElementById('instructorBtn').classList.remove('active');
+            document.getElementById(`${role}Btn`).classList.add('active');
+
+            // Slide the form to the selected role
+            if (role === 'student') {
+                document.getElementById('formWrapper').style.transform = 'translateX(0%)';
+            } else {
+                document.getElementById('formWrapper').style.transform = 'translateX(-50%)';
+            }
+            
+            // Hide errors when switching
+            document.querySelectorAll('.error').forEach(error => error.style.display = 'none');
+        }
+
+        function validateForm(role) {
+            let username = document.getElementById(role + 'Username').value;
+            let password = document.getElementById(role + 'Password').value;
+            let usernameError = document.getElementById(role + 'UsernameError');
+            let passwordError = document.getElementById(role + 'PasswordError');
+
+            let isUsernameValid = /^[a-zA-Z]+$/.test(username);
+            let isPasswordValid = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password);
+
+            usernameError.style.display = isUsernameValid ? 'none' : 'block';
+            passwordError.style.display = isPasswordValid ? 'none' : 'block';
+
+            // If both fields are valid, redirect to homeafter.html
+            if (isUsernameValid && isPasswordValid) {
+                window.location.href = "homeafter.html";
+            }
+        }
+    </script>
+
+</body>
+</html>
