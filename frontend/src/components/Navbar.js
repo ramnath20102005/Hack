@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Navbar, Nav, Container, Button, Dropdown } from 'react-bootstrap';
+import { Navbar, Nav, Container, Dropdown } from 'react-bootstrap';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { FaUser, FaSignOutAlt, FaBook, FaTasks, FaChalkboardTeacher, FaCog, FaHome, FaGraduationCap, FaRobot, FaChartLine } from 'react-icons/fa';
+import { FaUser, FaSignOutAlt, FaBook, FaTasks, FaChalkboardTeacher, FaCog, FaHome, FaGraduationCap, FaChartLine } from 'react-icons/fa';
 import './Navbar.css';
 
 const NavigationBar = () => {
@@ -32,6 +32,9 @@ const NavigationBar = () => {
     window.addEventListener('storage', handleStorageChange);
     window.addEventListener('scroll', handleScroll);
     
+    // Initial check for authentication
+    handleStorageChange();
+    
     return () => {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('scroll', handleScroll);
@@ -42,6 +45,9 @@ const NavigationBar = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('userRole');
     localStorage.removeItem('userName');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userSkills');
+    localStorage.removeItem('profileImage');
     setToken(null);
     setUserRole(null);
     navigate('/login');
@@ -145,8 +151,8 @@ const NavigationBar = () => {
                   <>
                     <Nav.Link 
                       as={Link} 
-                      to="/manage-courses" 
-                      className={`nav-link ${isActive('/manage-courses') ? 'active' : ''}`}
+                      to="/instructor" 
+                      className={`nav-link ${isActive('/instructor') ? 'active' : ''}`}
                     >
                       <FaChalkboardTeacher className="nav-icon" />
                       <span>Manage Courses</span>
@@ -170,7 +176,15 @@ const NavigationBar = () => {
               <Dropdown align="end" className="user-dropdown">
                 <Dropdown.Toggle variant="link" id="dropdown-user" className="user-toggle">
                   <div className="user-avatar">
-                    <FaUser />
+                    {localStorage.getItem('profileImage') ? (
+                      <img 
+                        src={localStorage.getItem('profileImage')} 
+                        alt="Profile" 
+                        className="profile-image"
+                      />
+                    ) : (
+                      <FaUser />
+                    )}
                   </div>
                   <span className="user-name">{userName}</span>
                 </Dropdown.Toggle>

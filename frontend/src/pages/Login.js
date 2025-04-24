@@ -38,10 +38,18 @@ const Login = () => {
       const data = await response.json();
 
       if (response.ok) {
+        // Store user data in localStorage
         localStorage.setItem('token', data.token);
         localStorage.setItem('userRole', data.role);
         localStorage.setItem('userName', data.name);
-        navigate('/profile');
+        localStorage.setItem('userId', data.id);
+
+        // Redirect based on role
+        if (data.role === 'instructor') {
+          navigate('/instructor');
+        } else {
+          navigate('/student');
+        }
       } else {
         setError(data.message || 'Login failed');
       }
@@ -118,63 +126,49 @@ const Login = () => {
 
                     <Col lg={12}>
                       <Form.Group className="mb-4">
-                        <Form.Label>Select Your Role</Form.Label>
+                        <Form.Label>Login As</Form.Label>
                         <div className="role-selector">
-                          <Form.Check
-                            type="radio"
-                            id="student"
-                            name="role"
-                            value="student"
-                            checked={formData.role === 'student'}
-                            onChange={handleChange}
-                            label={
-                              <div className="role-option">
-                                <FaUserGraduate className="role-icon" />
-                                <span>Student</span>
-                              </div>
-                            }
-                            className="role-radio"
-                          />
-                          <Form.Check
-                            type="radio"
-                            id="instructor"
-                            name="role"
-                            value="instructor"
-                            checked={formData.role === 'instructor'}
-                            onChange={handleChange}
-                            label={
-                              <div className="role-option">
-                                <FaChalkboardTeacher className="role-icon" />
-                                <span>Instructor</span>
-                              </div>
-                            }
-                            className="role-radio"
-                          />
+                          <Button
+                            variant={formData.role === 'student' ? 'primary' : 'outline-primary'}
+                            className="role-button"
+                            onClick={() => setFormData({ ...formData, role: 'student' })}
+                          >
+                            <FaUserGraduate className="me-2" />
+                            Student
+                          </Button>
+                          <Button
+                            variant={formData.role === 'instructor' ? 'primary' : 'outline-primary'}
+                            className="role-button"
+                            onClick={() => setFormData({ ...formData, role: 'instructor' })}
+                          >
+                            <FaChalkboardTeacher className="me-2" />
+                            Instructor
+                          </Button>
                         </div>
                       </Form.Group>
                     </Col>
-                  </Row>
 
-                  <div className="form-actions">
-                    <Button
-                      variant="primary"
-                      type="submit"
-                      className="login-button"
-                      size="lg"
-                      disabled={loading}
-                    >
-                      {loading ? 'Logging in...' : 'Login'}
-                    </Button>
+                    <Col lg={12}>
+                      <Button
+                        type="submit"
+                        variant="primary"
+                        size="lg"
+                        className="w-100 mb-3"
+                        disabled={loading}
+                      >
+                        {loading ? 'Logging in...' : 'Login'}
+                      </Button>
+                    </Col>
 
-                    <div className="text-center mt-4">
+                    <Col lg={12} className="text-center">
                       <p className="mb-0">
                         Don't have an account?{' '}
-                        <Link to="/signup" className="signup-link">
+                        <Link to="/signup" className="text-primary">
                           Sign up
                         </Link>
                       </p>
-                    </div>
-                  </div>
+                    </Col>
+                  </Row>
                 </Form>
               </Card.Body>
             </Card>

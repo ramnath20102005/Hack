@@ -1,0 +1,170 @@
+.course-management {
+  padding: 2rem;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.course-management h2 {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.course-management p {
+  color: #6c757d;
+  font-size: 1.1rem;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.empty-state p {
+  margin-bottom: 1rem;
+}
+
+.live-classes-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.live-class-item {
+  background: white;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.live-class-item a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.live-class-item a:hover {
+  text-decoration: underline;
+}
+
+.material-type-selector {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.materials-list {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.material-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+}
+
+.material-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.material-info svg {
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.material-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.material-actions .btn {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.375rem 0.75rem;
+}
+
+.material-actions .btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.material-actions .btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+.material-actions .btn-danger {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+.material-actions .btn-danger:hover {
+  background-color: #c82333;
+  border-color: #bd2130;
+}
+
+.delete-course-btn {
+  background-color: #dc3545;
+  border-color: #dc3545;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.delete-course-btn:hover {
+  background-color: #c82333;
+  border-color: #bd2130;
+  transform: translateY(-1px);
+}
+
+.delete-course-btn:active {
+  transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .course-management {
+    padding: 1rem;
+  }
+
+  .live-class-item,
+  .material-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .material-type-selector {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .material-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .material-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .delete-course-btn {
+    width: 100%;
+    margin-top: 1rem;
+  }
+} 

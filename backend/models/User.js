@@ -1,59 +1,58 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
-const userSchema = mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-    },
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    password: {
-      type: String,
-      required: true,
-    },
-    role: {
-      type: String,
-      enum: ['student', 'instructor'],
-      required: true,
-    },
-    profileImage: {
-      type: String,
-      default: null, // No default image, will be handled by frontend
-    },
-    bio: {
-      type: String,
-      default: "",
-    },
-    skills: {
-      type: [String],
-      default: [],
-    },
-    interests: {
-      type: [String],
-      default: [],
-    },
-    achievements: {
-      type: [String],
-      default: [],
-    },
-    socialMediaLinks: {
-      type: {
-        linkedin: { type: String, default: "" },
-        twitter: { type: String, default: "" },
-        github: { type: String, default: "" },
-      },
-      default: {},
-    },
+const userSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true
   },
-  {
-    timestamps: true,
+  email: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  password: {
+    type: String,
+    required: true
+  },
+  role: {
+    type: String,
+    enum: ['student', 'instructor'],
+    default: 'student'
+  },
+  profileImage: {
+    type: String,
+    default: null, // No default image, will be handled by frontend
+  },
+  bio: {
+    type: String,
+    default: "",
+  },
+  skills: {
+    type: [String],
+    default: [],
+  },
+  interests: {
+    type: [String],
+    default: [],
+  },
+  achievements: {
+    type: [String],
+    default: [],
+  },
+  socialMediaLinks: {
+    type: {
+      linkedin: { type: String, default: "" },
+      twitter: { type: String, default: "" },
+      github: { type: String, default: "" },
+    },
+    default: {},
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
   }
-);
+});
 
 // Hash password before saving
 userSchema.pre('save', async function (next) {

@@ -49,23 +49,28 @@ const updateProfile = asyncHandler(async (req, res) => {
     user.profileImage = profileImage;
   }
 
-  // Save the updated user
-  const updatedUser = await user.save();
+  try {
+    // Save the updated user
+    const updatedUser = await user.save();
 
-  // Return the updated user data
-  res.json({
-    _id: updatedUser._id,
-    name: updatedUser.name,
-    email: updatedUser.email,
-    bio: updatedUser.bio,
-    title: updatedUser.title,
-    skills: updatedUser.skills,
-    interests: updatedUser.interests,
-    achievements: updatedUser.achievements,
-    experience: updatedUser.experience,
-    projects: updatedUser.projects,
-    profileImage: updatedUser.profileImage
-  });
+    // Return the updated user data
+    res.json({
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      bio: updatedUser.bio,
+      title: updatedUser.title,
+      skills: updatedUser.skills,
+      interests: updatedUser.interests,
+      achievements: updatedUser.achievements,
+      experience: updatedUser.experience,
+      projects: updatedUser.projects,
+      profileImage: updatedUser.profileImage
+    });
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    res.status(500).json({ message: 'Failed to update profile', error: error.message });
+  }
 });
 
 module.exports = { getProfile, updateProfile };

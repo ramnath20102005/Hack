@@ -41,18 +41,22 @@ const signup = asyncHandler(async (req, res) => {
 // @route   POST /api/auth/login
 // @access  Public
 const login = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, role } = req.body;
 
   // Check if user exists
   const user = await User.findOne({ email });
   if (user && (await user.matchPassword(password))) {
+    // Check if user role matches requested role
+    if (user.role !== role) {
+      res.status(401);
+      throw new Error(`Please login as a ${user.role}`);
+    }
+
     res.json({
       _id: user._id,
       name: user.name,
       email: user.email,
       role: user.role,
-      skills: user.skills,
-      interests: user.interests,
       token: generateToken(user._id),
     });
   } else {

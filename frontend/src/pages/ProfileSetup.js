@@ -41,7 +41,7 @@ const ProfileSetup = () => {
       };
 
       const response = await fetch('http://localhost:5000/api/profile', {
-        method: 'POST',
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
