@@ -7,6 +7,7 @@ const courseRoutes = require('./routes/courseRoutes');
 const profileRoutes = require('./routes/profileRoutes');
 const assignmentRoutes = require('./routes/assignmentRoutes');
 const studentRoutes = require('./routes/studentRoutes');
+const aiRoutes = require('./routes/aiRoutes');
 
 // Load environment variables
 dotenv.config();
@@ -29,7 +30,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/assignments', assignmentRoutes);
-app.use('/api/students', studentRoutes);
+app.use('/api/student', studentRoutes);
+app.use('/api/ai', aiRoutes);
 
 // Connect to MongoDB with updated options
 const connectDB = async () => {

@@ -70,8 +70,8 @@ const NavigationBar = () => {
             <FaGraduationCap className="logo-icon" />
           </div>
           <div className="brand-text">
-            <span className="brand-primary">E-Learning</span>
-            <span className="brand-secondary">Platform</span>
+            <span className="brand-primary">Learn_E</span>
+            <span className="brand-secondary">E-Learning Platform</span>
           </div>
         </Navbar.Brand>
         
@@ -100,55 +100,38 @@ const NavigationBar = () => {
               </>
             ) : (
               <>
-                <Nav.Link 
-                  as={Link} 
-                  to="/" 
-                  className={`nav-link ${isActive('/') ? 'active' : ''}`}
-                >
-                  <FaHome className="nav-icon" />
-                  <span>Home</span>
-                </Nav.Link>
-                
-                <Nav.Link 
-                  as={Link} 
-                  to="/profile" 
-                  className={`nav-link ${isActive('/profile') ? 'active' : ''}`}
-                >
-                  <FaUser className="nav-icon" />
-                  <span>Profile</span>
-                </Nav.Link>
-                
                 {userRole === 'student' && (
                   <>
                     <Nav.Link 
                       as={Link} 
-                      to="/courses" 
-                      className={`nav-link ${isActive('/courses') ? 'active' : ''}`}
+                      to="/home" 
+                      className={`nav-link ${isActive('/home') ? 'active' : ''}`}
                     >
-                      <FaBook className="nav-icon" />
-                      <span>My Courses</span>
+                      <FaHome className="nav-icon" />
+                      <span>Home</span>
                     </Nav.Link>
+                    
                     <Nav.Link 
                       as={Link} 
-                      to="/assignments" 
-                      className={`nav-link ${isActive('/assignments') ? 'active' : ''}`}
+                      to="/profile" 
+                      className={`nav-link ${isActive('/profile') ? 'active' : ''}`}
                     >
-                      <FaTasks className="nav-icon" />
-                      <span>Assignments</span>
-                    </Nav.Link>
-                    <Nav.Link 
-                      as={Link} 
-                      to="/career-guidance" 
-                      className={`nav-link ${isActive('/career-guidance') ? 'active' : ''}`}
-                    >
-                      <FaChartLine className="nav-icon" />
-                      <span>Career Guidance</span>
+                      <FaUser className="nav-icon" />
+                      <span>Profile</span>
                     </Nav.Link>
                   </>
                 )}
                 
                 {userRole === 'instructor' && (
                   <>
+                  <Nav.Link 
+                      as={Link} 
+                      to="/home-instructor" 
+                      className={`nav-link ${isActive('/home-instructor') ? 'active' : ''}`}
+                    >
+                      <FaHome className="nav-icon" />
+                      <span>Home</span>
+                    </Nav.Link>
                     <Nav.Link 
                       as={Link} 
                       to="/instructor" 
@@ -159,12 +142,13 @@ const NavigationBar = () => {
                     </Nav.Link>
                     <Nav.Link 
                       as={Link} 
-                      to="/manage-assignments" 
-                      className={`nav-link ${isActive('/manage-assignments') ? 'active' : ''}`}
+                      to="/profile" 
+                      className={`nav-link ${isActive('/profile') ? 'active' : ''}`}
                     >
-                      <FaTasks className="nav-icon" />
-                      <span>Manage Assignments</span>
+                      <FaUser className="nav-icon" />
+                      <span>Profile</span>
                     </Nav.Link>
+                    
                   </>
                 )}
               </>

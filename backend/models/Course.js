@@ -9,6 +9,13 @@ const courseSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  detailedDescription: {
+    type: String,
+    default: ''
+  },
+  learningObjectives: [{
+    type: String
+  }],
   template: {
     type: String,
     enum: ['basic', 'advanced', 'workshop'],
@@ -22,6 +29,10 @@ const courseSchema = new mongoose.Schema({
   students: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
+  }],
+  assignments: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Assignment'
   }],
   materials: [{
     type: {
@@ -73,6 +84,17 @@ const courseSchema = new mongoose.Schema({
       default: null
     }
   }],
+  duration: {
+    type: String,
+    default: 'Flexible'
+  },
+  level: {
+    type: String,
+    default: 'All Levels'
+  },
+  thumbnail: {
+    type: String
+  },
   createdAt: {
     type: Date,
     default: Date.now

@@ -8,9 +8,12 @@ import ProfileSetup from './pages/ProfileSetup';
 import Profile from './pages/Profile';
 import Landing from './pages/Landing';
 import CareerGuidance from './pages/CareerGuidance';
-import InstructorPage from './pages/InstructorPage';
-import StudentPage from './pages/StudentPage';
+import HomeInstructor from './pages/HomeInstructor';
 import CourseManagement from './pages/CourseManagement';
+import Home from './pages/Home';
+import CourseDetail from './pages/CourseDetail';
+import AssignmentAttempt from './pages/AssignmentAttempt';
+import InstructorPage from './pages/InstructorPage';
 import './index.css';
 
 const App = () => {
@@ -21,15 +24,19 @@ const App = () => {
         <main className="main-content">
           <Container fluid className="content-container">
             <Routes>
+              <Route path="/" element={<Landing />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
-              <Route path="/profile-setup" element={<ProfileSetup />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/career-guidance" element={<CareerGuidance />} />
+              <Route path="/register" element={<Signup />} />
+              <Route path="/home" element={<Home />} />
+              <Route path="/home-instructor" element={<HomeInstructor />} />
               <Route path="/instructor" element={<InstructorPage />} />
-              <Route path="/student" element={<StudentPage />} />
-              <Route path="/" element={<Landing />} /> {/* Default route */}
-              <Route path="/course/:courseId" element={<CourseManagement />} />
+              <Route path="/course/:courseId" element={<CourseDetail />} />
+              <Route path="/instructor/course/:courseId" element={<CourseManagement />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/profile-setup" element={<ProfileSetup />} />
+              <Route path="/career-guidance" element={<CareerGuidance />} />
+              <Route path="/assignment/:assignmentId" element={<AssignmentAttempt />} />
             </Routes>
           </Container>
         </main>

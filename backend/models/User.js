@@ -48,6 +48,32 @@ const userSchema = new mongoose.Schema({
     },
     default: {},
   },
+  // Student-specific fields
+  education: {
+    type: String,
+    default: "",
+  },
+  year: {
+    type: String,
+    default: "",
+  },
+  major: {
+    type: String,
+    default: "",
+  },
+  // Instructor-specific fields
+  department: {
+    type: String,
+    default: "",
+  },
+  expertise: {
+    type: [String],
+    default: [],
+  },
+  office: {
+    type: String,
+    default: "",
+  },
   createdAt: {
     type: Date,
     default: Date.now

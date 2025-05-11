@@ -49,7 +49,7 @@ const Signup = () => {
         localStorage.setItem('token', data.token);
         localStorage.setItem('userRole', data.role);
         localStorage.setItem('userName', data.name);
-        navigate('/profile-setup');
+      navigate('/profile-setup');
       } else {
         setError(data.message || 'Signup failed');
       }
@@ -78,7 +78,7 @@ const Signup = () => {
                   </Alert>
                 )}
 
-                <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit}>
                   <Row>
                     <Col lg={12}>
                       <Form.Group className="mb-4">
@@ -111,22 +111,22 @@ const Signup = () => {
                               <FaEnvelope />
                             </span>
                           </div>
-                          <Form.Control
-                            type="email"
+            <Form.Control
+              type="email"
                             name="email"
                             value={formData.email}
                             onChange={handleChange}
                             placeholder="Enter your email"
                             required
                             size="lg"
-                          />
+            />
                         </div>
-                      </Form.Group>
+          </Form.Group>
                     </Col>
 
                     <Col lg={6}>
                       <Form.Group className="mb-4">
-                        <Form.Label>Password</Form.Label>
+            <Form.Label>Password</Form.Label>
                         <div className="input-group input-group-lg">
                           <div className="input-group-prepend">
                             <span className="input-group-text">
@@ -155,8 +155,8 @@ const Signup = () => {
                               <FaLock />
                             </span>
                           </div>
-                          <Form.Control
-                            type="password"
+            <Form.Control
+              type="password"
                             name="confirmPassword"
                             value={formData.confirmPassword}
                             onChange={handleChange}
@@ -201,9 +201,9 @@ const Signup = () => {
                               </div>
                             }
                             className="role-radio"
-                          />
+            />
                         </div>
-                      </Form.Group>
+          </Form.Group>
                     </Col>
                   </Row>
 
@@ -216,7 +216,7 @@ const Signup = () => {
                       disabled={loading}
                     >
                       {loading ? 'Creating Account...' : 'Create Account'}
-                    </Button>
+          </Button>
 
                     <div className="text-center mt-4">
                       <p className="mb-0">
@@ -224,9 +224,9 @@ const Signup = () => {
                         <Link to="/login" className="login-link">
                           Login
                         </Link>
-                      </p>
-                    </div>
-                  </div>
+          </p>
+        </div>
+      </div>
                 </Form>
               </Card.Body>
             </Card>

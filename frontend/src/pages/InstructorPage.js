@@ -126,7 +126,7 @@ const InstructorPage = () => {
     // Set up interval to check for upcoming classes
     const interval = setInterval(checkUpcomingClasses, 60000); // Check every minute
     return () => clearInterval(interval);
-  }, [navigate, checkUpcomingClasses, fetchAssignments]);
+  }, [navigate]);
 
   const fetchCourses = async () => {
     try {
@@ -184,7 +184,7 @@ const InstructorPage = () => {
       setNewCourse({ title: '', description: '', template: 'basic' });
       
       // Immediately navigate to the course management page
-      navigate(`/course/${data._id}`, { 
+      navigate(`/instructor/course/${data._id}`, { 
         state: { 
           course: data,
           message: 'Course created successfully! Now you can add live classes and course materials.' 

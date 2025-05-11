@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Button, Form, Alert } from 'react-bootstrap';
-import { FaUser, FaEdit, FaSave, FaTimes, FaCode, FaStar, FaTrophy } from 'react-icons/fa';
+import { Container, Row, Col, Card, Button, Form, Alert, Modal, ProgressBar, Badge } from 'react-bootstrap';
+import { FaUser, FaEdit, FaSave, FaTimes, FaCode, FaStar, FaTrophy, FaBook, FaClipboardList, FaCheckCircle, FaEnvelope, FaPhone, FaGraduationCap } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import defaultAvatar from '../assets/default-avatar.png';
+import Chatbot from '../components/Chatbot';
 import './Profile.css';
 
 const Profile = () => {
@@ -18,10 +19,26 @@ const Profile = () => {
     experience: 0,
     projects: 0,
     achievements: 0,
-    profileImage: null
+    profileImage: null,
+    email: '',
+    phone: '',
+    education: '',
+    role: ''
   });
-
   const [editForm, setEditForm] = useState({ ...profileData });
+  const [enrolledCourses, setEnrolledCourses] = useState([]);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [selectedCourse, setSelectedCourse] = useState(null);
+  const [courseHistory, setCourseHistory] = useState(null);
+  const [loadingHistory, setLoadingHistory] = useState(false);
+  const [instructorCourses, setInstructorCourses] = useState([]);
+  const [showCourseModal, setShowCourseModal] = useState(false);
+  const [selectedInstructorCourse, setSelectedInstructorCourse] = useState(null);
+  const [modalAssignments, setModalAssignments] = useState([]);
+  const [studentAssignments, setStudentAssignments] = useState([]);
+  const [progressModal, setProgressModal] = useState({ show: false, course: null, assignments: [] });
+  const [progressData, setProgressData] = useState(null);
+  const userRole = localStorage.getItem('userRole');
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -37,7 +54,6 @@ const Profile = () => {
             'Authorization': `Bearer ${token}`
           }
         });
-        
         if (response.ok) {
           const data = await response.json();
           setProfileData(data);
@@ -51,8 +67,55 @@ const Profile = () => {
       }
     };
 
+    const fetchEnrolledCourses = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/student/courses', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setEnrolledCourses(data);
+        }
+      } catch (err) {
+        console.error('Error fetching enrolled courses:', err);
+      }
+    };
+
+    const fetchInstructorCourses = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/courses/instructor', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setInstructorCourses(data);
+        }
+      } catch (error) {
+        console.error('Error fetching instructor courses:', error);
+      }
+    };
+
+    const fetchAssignments = async () => {
+      try {
+        const res = await fetch('http://localhost:5000/api/student/assignments', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setStudentAssignments(data);
+        }
+      } catch (err) {
+        console.error('Error fetching student assignments:', err);
+      }
+    };
+
     fetchProfileData();
-  }, [navigate]);
+    if (userRole === 'student') fetchEnrolledCourses();
+    if (userRole === 'instructor') fetchInstructorCourses();
+    fetchAssignments();
+  }, [navigate, userRole]);
 
   const handleEdit = () => {
     setEditForm({ ...profileData });
@@ -87,7 +150,7 @@ const Profile = () => {
   };
 
   const handleCancel = () => {
-    setIsEditing(false);
+      setIsEditing(false);
     setError('');
   };
 
@@ -127,174 +190,206 @@ const Profile = () => {
     return profileData.profileImage || defaultAvatar;
   };
 
+  const handleShowHistory = async (course) => {
+    setSelectedCourse(course);
+    setShowHistoryModal(true);
+    setLoadingHistory(true);
+    setModalAssignments([]);
+    setCourseHistory(null);
+    try {
+      const token = localStorage.getItem('token');
+      const courseId = String(course._id);
+      const [assignmentsRes, historyRes] = await Promise.all([
+        fetch(`http://localhost:5000/api/assignments/course/${courseId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        }),
+        fetch(`http://localhost:5000/api/courses/${courseId}/history`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        })
+      ]);
+      let assignments = [];
+      if (assignmentsRes.ok) {
+        assignments = await assignmentsRes.json();
+      }
+      setModalAssignments(assignments || []);
+      let history = null;
+      if (historyRes.ok) {
+        history = await historyRes.json();
+      }
+      setCourseHistory(history && Array.isArray(history.assignments) ? history : { assignments: [] });
+    } catch (error) {
+      setModalAssignments([]);
+      setCourseHistory({ assignments: [] });
+    } finally {
+      setLoadingHistory(false);
+    }
+  };
+
+  const calculateModalProgress = () => {
+    if (!modalAssignments || modalAssignments.length === 0) return 100; // Reference course
+    if (!courseHistory?.assignments?.length) return 0;
+    const completed = modalAssignments.filter(assignment =>
+      courseHistory.assignments.some(a =>
+        String(a.assignment) === String(assignment._id) ||
+        String(a.assignment?._id) === String(assignment._id)
+      )
+    ).length;
+    return Math.round((completed / modalAssignments.length) * 100);
+  };
+
+  const handleViewProgress = (course) => {
+    const courseAssignments = studentAssignments.filter(a => {
+      // a.course can be an object or string
+      if (!a.course) return false;
+      if (typeof a.course === 'string') return a.course === course._id;
+      return a.course._id === course._id;
+    });
+    setProgressModal({ show: true, course, assignments: courseAssignments });
+  };
+
   return (
     <div className="page-container py-5">
       <Container fluid>
         <Row className="justify-content-center">
-          <Col lg={10}>
+          <Col md={4}>
             <Card className="profile-card shadow-sm">
               <Card.Body className="p-4">
-                {error && <Alert variant="danger">{error}</Alert>}
-                
+                <div className="profile-header text-center">
+                  <img
+                    src={profileData.profileImage || defaultAvatar}
+                    alt="Profile"
+                    style={{ width: 100, height: 100, borderRadius: '50%', objectFit: 'cover', marginBottom: 12, border: '2px solid #eee' }}
+                  />
+                  <h3>{profileData.name}</h3>
+                  <p className="text-muted">{profileData.role === 'student' ? 'Student' : 'Instructor'}</p>
+                </div>
                 {!isEditing ? (
-                  <>
-                    <div className="text-center mb-4">
-                      <div className="profile-image-wrapper">
-                        <img
-                          src={getProfileImageSrc()}
-                          alt="Profile"
-                          className="profile-image"
-                        />
-                      </div>
-                      <h2 className="mt-3">{profileData.name || 'Complete Your Profile'}</h2>
-                      <p className="text-muted">{profileData.title || 'Add your title'}</p>
-                      <Button variant="outline-primary" onClick={handleEdit}>
-                        <FaEdit className="me-2" />
-                        Edit Profile
-                      </Button>
-                    </div>
-
-                    <Row className="mb-4">
-                      <Col md={4}>
-                        <Card className="stat-card text-center p-3">
-                          <FaCode className="stat-icon" />
-                          <div className="stat-value">{profileData.experience}</div>
-                          <div className="text-muted">Years Experience</div>
-                        </Card>
-                      </Col>
-                      <Col md={4}>
-                        <Card className="stat-card text-center p-3">
-                          <FaStar className="stat-icon" />
-                          <div className="stat-value">{profileData.projects}</div>
-                          <div className="text-muted">Projects</div>
-                        </Card>
-                      </Col>
-                      <Col md={4}>
-                        <Card className="stat-card text-center p-3">
-                          <FaTrophy className="stat-icon" />
-                          <div className="stat-value">{profileData.achievements}</div>
-                          <div className="text-muted">Achievements</div>
-                        </Card>
-                      </Col>
-                    </Row>
-
-                    <div className="mb-4">
-                      <h4 className="section-title">About Me</h4>
-                      <p className="bio-text">{profileData.bio || 'Add your bio to let others know about you.'}</p>
-                    </div>
-
-                    <div className="mb-4">
-                      <h4 className="section-title">Skills</h4>
-                      <div className="skills-container">
-                        {profileData.skills && profileData.skills.length > 0 ? (
-                          profileData.skills.map((skill, index) => (
-                            <span key={index} className="skill-badge">
-                              {skill}
-                            </span>
-                          ))
-                        ) : (
-                          <p className="text-muted">Add your skills</p>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="mb-4">
-                      <h4 className="section-title">Interests</h4>
-                      <div className="skills-container">
-                        {profileData.interests && profileData.interests.length > 0 ? (
-                          profileData.interests.map((interest, index) => (
-                            <span key={index} className="skill-badge">
-                              {interest}
-                            </span>
-                          ))
-                        ) : (
-                          <p className="text-muted">Add your interests</p>
-                        )}
-                      </div>
-                    </div>
-                  </>
+                  <div className="profile-info">
+                    <p><FaEnvelope className="me-2" /> {profileData.email}</p>
+                    <p><FaPhone className="me-2" /> {profileData.phone || 'Not provided'}</p>
+                    {profileData.role === 'student' ? (
+                      <>
+                        <p><FaGraduationCap className="me-2" /> {profileData.education || 'Not provided'}</p>
+                        <p>Year: {profileData.year || 'Not provided'}</p>
+                        <p>Major: {profileData.major || 'Not provided'}</p>
+                      </>
+                    ) : (
+                      <>
+                        <p>Department: {profileData.department || 'Not provided'}</p>
+                        <p>Expertise: {(profileData.expertise && profileData.expertise.length > 0) ? profileData.expertise.join(', ') : 'Not provided'}</p>
+                        <p>Office: {profileData.office || 'Not provided'}</p>
+                      </>
+                    )}
+                    <Button variant="primary" onClick={handleEdit} className="mt-3">
+                      <FaEdit className="me-2" /> Edit Profile
+                    </Button>
+                  </div>
                 ) : (
-                  <Form className="edit-form">
-                    <div className="text-center mb-4">
-                      <div className="profile-image-wrapper">
-                        <img
-                          src={getProfileImageSrc()}
-                          alt="Profile"
-                          className="profile-image"
-                        />
-                      </div>
-                      <Form.Group className="mb-3">
-                        <Form.Label>Profile Image</Form.Label>
-                        <Form.Control
-                          type="file"
-                          accept="image/*"
-                          onChange={handleImageChange}
-                        />
-                        <Form.Text className="text-muted">
-                          Recommended size: 200x200px, max 5MB
-                        </Form.Text>
-                      </Form.Group>
-                    </div>
-
+                  <Form onSubmit={handleSave}>
                     <Form.Group className="mb-3">
                       <Form.Label>Name</Form.Label>
                       <Form.Control
                         type="text"
+                        name="name"
                         value={editForm.name}
                         onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                        placeholder="Enter your name"
+                        required
                       />
                     </Form.Group>
-
                     <Form.Group className="mb-3">
-                      <Form.Label>Title</Form.Label>
+                      <Form.Label>Phone</Form.Label>
                       <Form.Control
-                        type="text"
-                        value={editForm.title}
-                        onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
-                        placeholder="Enter your professional title"
+                        type="tel"
+                        name="phone"
+                        value={editForm.phone}
+                        onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
                       />
                     </Form.Group>
-
-                    <Form.Group className="mb-3">
-                      <Form.Label>Bio</Form.Label>
-                      <Form.Control
-                        as="textarea"
-                        rows={3}
-                        value={editForm.bio}
-                        onChange={(e) => setEditForm({ ...editForm, bio: e.target.value })}
-                        placeholder="Tell us about yourself"
-                      />
-                    </Form.Group>
-
-                    <Form.Group className="mb-3">
-                      <Form.Label>Skills (comma-separated)</Form.Label>
-                      <Form.Control
-                        type="text"
-                        value={editForm.skills ? editForm.skills.join(', ') : ''}
-                        onChange={(e) => setEditForm({ ...editForm, skills: e.target.value.split(',').map(s => s.trim()) })}
-                        placeholder="e.g., React, Node.js, Python"
-                      />
-                    </Form.Group>
-
-                    <Form.Group className="mb-3">
-                      <Form.Label>Interests (comma-separated)</Form.Label>
-                      <Form.Control
-                        type="text"
-                        value={editForm.interests ? editForm.interests.join(', ') : ''}
-                        onChange={(e) => setEditForm({ ...editForm, interests: e.target.value.split(',').map(s => s.trim()) })}
-                        placeholder="e.g., Machine Learning, Web Development"
-                      />
-                    </Form.Group>
-
-                    <div className="d-flex justify-content-end gap-2">
-                      <Button variant="secondary" onClick={handleCancel}>
-                        <FaTimes className="me-2" />
-                        Cancel
+                    {profileData.role === 'student' ? (
+                      <>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Education</Form.Label>
+                          <Form.Control
+                            type="text"
+                            name="education"
+                            value={editForm.education}
+                            onChange={(e) => setEditForm({ ...editForm, education: e.target.value })}
+                          />
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Year</Form.Label>
+                          <Form.Control
+                            type="text"
+                            name="year"
+                            value={editForm.year}
+                            onChange={(e) => setEditForm({ ...editForm, year: e.target.value })}
+                          />
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Major</Form.Label>
+                          <Form.Control
+                            type="text"
+                            name="major"
+                            value={editForm.major}
+                            onChange={(e) => setEditForm({ ...editForm, major: e.target.value })}
+                          />
+                        </Form.Group>
+                      </>
+                    ) : (
+                      <>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Department</Form.Label>
+                          <Form.Control
+                            type="text"
+                            name="department"
+                            value={editForm.department}
+                            onChange={(e) => setEditForm({ ...editForm, department: e.target.value })}
+                          />
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Expertise</Form.Label>
+                          <Form.Control
+                            type="text"
+                            name="expertise"
+                            value={Array.isArray(editForm.expertise) ? editForm.expertise.join(', ') : editForm.expertise}
+                            onChange={(e) => setEditForm({ ...editForm, expertise: e.target.value })}
+                          />
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Office</Form.Label>
+                          <Form.Control
+                            type="text"
+                            name="office"
+                            value={editForm.office}
+                            onChange={(e) => setEditForm({ ...editForm, office: e.target.value })}
+                          />
+                        </Form.Group>
+                      </>
+                    )}
+                    {isEditing && (
+                      <Form.Group className="mb-3 text-center">
+                        <Form.Label>Profile Image</Form.Label>
+                        <div>
+                          <img
+                            src={editForm.profileImage || defaultAvatar}
+                            alt="Profile Preview"
+                            style={{ width: 100, height: 100, borderRadius: '50%', objectFit: 'cover', marginBottom: 8, border: '2px solid #eee' }}
+                          />
+                        </div>
+                        <Form.Control
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageChange}
+                          style={{ maxWidth: 300, margin: '0 auto' }}
+                        />
+                      </Form.Group>
+                    )}
+                    <div className="d-flex gap-2">
+                      <Button variant="primary" type="submit">
+                        <FaSave className="me-2" /> Save
                       </Button>
-                      <Button variant="primary" onClick={handleSave}>
-                        <FaSave className="me-2" />
-                        Save Changes
+                      <Button variant="secondary" onClick={handleCancel}>
+                        <FaTimes className="me-2" /> Cancel
                       </Button>
                     </div>
                   </Form>
@@ -302,7 +397,192 @@ const Profile = () => {
               </Card.Body>
             </Card>
           </Col>
+          <Col md={8}>
+            <Card className="enrolled-courses-card">
+              <Card.Body>
+                {profileData.role === 'instructor' ? (
+                  <>
+                    <h4 className="mb-4">Your Courses</h4>
+                    {instructorCourses.length > 0 ? (
+                      <div className="enrolled-courses-list">
+                        {instructorCourses.map((course) => (
+                          <Card key={course._id} className="course-card mb-3" onClick={() => { setSelectedInstructorCourse(course); setShowCourseModal(true); }} style={{ cursor: 'pointer' }}>
+                            <Card.Body>
+                              <div className="d-flex justify-content-between align-items-start">
+                                <div>
+                                  <h5>{course.title}</h5>
+                                  <p className="text-muted mb-2">{course.description}</p>
+                                  <div className="course-meta">
+                                    <span><FaBook className="me-2" /> {course.materials?.length || 0} Materials</span>
+                                    <span><FaClipboardList className="me-2" /> {course.assignments?.length || 0} Assignments</span>
+                                  </div>
+                                </div>
+                                <Button variant="outline-primary" onClick={e => { e.stopPropagation(); setSelectedInstructorCourse(course); setShowCourseModal(true); }}>
+                                  View Details
+                                </Button>
+                              </div>
+                            </Card.Body>
+                          </Card>
+                        ))}
+                      </div>
+                    ) : (
+                      <Alert variant="info">You haven't created any courses yet.</Alert>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <h4 className="mb-4">Enrolled Courses</h4>
+                    {enrolledCourses.length > 0 ? (
+                      <div className="enrolled-courses-list">
+                        {enrolledCourses.map((course) => (
+                          <Card key={course._id} className="course-card mb-3">
+                            <Card.Body>
+                              <div className="d-flex justify-content-between align-items-start">
+                                <div>
+                                  <h5>{course.title}</h5>
+                                  <p className="text-muted mb-2">{course.description}</p>
+                                  <div className="course-meta">
+                                    <span><FaBook className="me-2" /> {course.materials?.length || 0} Materials</span>
+                                    <span><FaClipboardList className="me-2" /> {course.assignments?.length || 0} Assignments</span>
+                                  </div>
+                                </div>
+                                <Button
+                                  variant="outline-primary"
+                                  onClick={() => {
+                                    setSelectedCourse(course);
+                                    setShowHistoryModal(true);
+                                  }}
+                                >
+                                  View
+                                </Button>
+                              </div>
+                            </Card.Body>
+                          </Card>
+                        ))}
+                      </div>
+                    ) : (
+                      <Alert variant="info">
+                        You haven't enrolled in any courses yet. Browse our courses to start learning!
+                      </Alert>
+                    )}
+                  </>
+                )}
+              </Card.Body>
+            </Card>
+          </Col>
         </Row>
+
+        {/* Course History Modal */}
+        {userRole !== 'instructor' && (
+          <Modal show={showHistoryModal} onHide={() => setShowHistoryModal(false)} size="lg" centered>
+            <Modal.Header closeButton>
+              <Modal.Title>Course History: {selectedCourse?.title}</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              {loadingHistory ? (
+                <div className="text-center my-4">
+                  <div className="spinner-border text-primary" role="status"></div>
+                  <div>Loading course details...</div>
+                </div>
+              ) : (
+                <>
+                  <Card className="mb-3 shadow-sm" style={{ borderRadius: '12px', border: 'none' }}>
+                    <Card.Body>
+                      <h4 className="mb-2">{selectedCourse?.title}</h4>
+                      <p className="text-muted mb-2">{selectedCourse?.description}</p>
+                      <div className="mb-2">
+                        <Badge bg="info" className="me-2">Instructor: {selectedCourse?.instructor?.name || 'N/A'}</Badge>
+                        <Badge bg="primary" className="me-2">{selectedCourse?.materials?.length || 0} Materials</Badge>
+                        <Badge bg="success">{selectedCourse?.assignments?.length || 0} Assignments</Badge>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                  <div className="d-flex justify-content-end">
+                    <Button
+                      variant="primary"
+                      onClick={() => {
+                        setShowHistoryModal(false);
+                        navigate(`/course/${selectedCourse._id}`);
+                      }}
+                    >
+                      Go to Course Details
+                    </Button>
+                  </div>
+                </>
+              )}
+            </Modal.Body>
+          </Modal>
+        )}
+
+        {/* Instructor Course Details Modal */}
+        {profileData.role === 'instructor' && (
+          <Modal show={showCourseModal} onHide={() => setShowCourseModal(false)} size="lg" centered>
+            <Modal.Header closeButton>
+              <Modal.Title>Course Details: {selectedInstructorCourse?.title}</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              {selectedInstructorCourse ? (
+                <>
+                  <h5>Description</h5>
+                  <p>{selectedInstructorCourse.description}</p>
+                  <h5>Number of Students Enrolled</h5>
+                  <p>{selectedInstructorCourse.students ? selectedInstructorCourse.students.length : 0}</p>
+                  <h5>Materials</h5>
+                  <ul>
+                    {selectedInstructorCourse.materials && selectedInstructorCourse.materials.length > 0 ? (
+                      selectedInstructorCourse.materials.map((mat, idx) => (
+                        <li key={idx}>{mat.title}</li>
+                      ))
+                    ) : (
+                      <li>No materials added yet.</li>
+                    )}
+                  </ul>
+                  <h5>Assignments</h5>
+                  <ul>
+                    {selectedInstructorCourse.assignments && selectedInstructorCourse.assignments.length > 0 ? (
+                      selectedInstructorCourse.assignments.map((assn, idx) => (
+                        <li key={idx}>{assn.title || 'Untitled Assignment'}</li>
+                      ))
+                    ) : (
+                      <li>No assignments added yet.</li>
+                    )}
+                  </ul>
+                </>
+              ) : (
+                <div>Loading...</div>
+              )}
+            </Modal.Body>
+          </Modal>
+        )}
+
+        {/* Progress Modal */}
+        <Modal show={progressModal.show} onHide={() => setProgressModal({ show: false, course: null, assignments: [] })}>
+          <Modal.Header closeButton>
+            <Modal.Title>Progress for {progressModal.course?.title}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {progressModal.assignments.length === 0 ? (
+              <Alert variant="info">This is a reference course.</Alert>
+            ) : (
+              <>
+                <ul>
+                  {progressModal.assignments.map(a => (
+                    <li key={a._id}>
+                      {a.title} - {a.submitted ? `Completed${a.score ? ` (Score: ${a.score})` : ''}` : 'Not attempted'}
+                    </li>
+                  ))}
+                </ul>
+                <ProgressBar
+                  now={progressModal.assignments.filter(a => a.submitted).length / progressModal.assignments.length * 100}
+                  label={`${progressModal.assignments.filter(a => a.submitted).length}/${progressModal.assignments.length}`}
+                />
+              </>
+            )}
+          </Modal.Body>
+        </Modal>
+
+        {/* Add Chatbot component */}
+        <Chatbot />
       </Container>
     </div>
   );

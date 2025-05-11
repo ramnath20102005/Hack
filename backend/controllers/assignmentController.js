@@ -1,4 +1,5 @@
 const Assignment = require('../models/Assignment');
+const Course = require('../models/Course');
 
 // Create a new assignment
 exports.createAssignment = async (req, res) => {
@@ -100,6 +101,12 @@ exports.createAssignment = async (req, res) => {
     // Save the assignment
     const savedAssignment = await assignment.save();
     console.log('Assignment created successfully:', savedAssignment);
+
+    // Add the assignment to the course's assignments array
+    await Course.findByIdAndUpdate(
+      savedAssignment.course,
+      { $addToSet: { assignments: savedAssignment._id } }
+    );
 
     // Return the created assignment
     res.status(201).json({

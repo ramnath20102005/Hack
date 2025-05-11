@@ -36,7 +36,8 @@ exports.getEnrolledCourses = async (req, res) => {
     const studentId = req.user._id;
     const courses = await Course.find({ students: studentId })
       .populate('instructor', 'name')
-      .select('title description materials liveClasses');
+      .populate({ path: 'assignments', select: 'title _id' })
+      .select('title description materials liveClasses assignments');
 
     res.json(courses);
   } catch (err) {

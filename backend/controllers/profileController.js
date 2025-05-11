@@ -12,7 +12,28 @@ const getProfile = asyncHandler(async (req, res) => {
     throw new Error('User not found');
   }
 
-  res.json(user);
+  res.json({
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+    bio: user.bio,
+    title: user.title,
+    skills: user.skills,
+    interests: user.interests,
+    achievements: user.achievements,
+    experience: user.experience,
+    projects: user.projects,
+    profileImage: user.profileImage,
+    role: user.role,
+    // Student fields
+    education: user.education,
+    year: user.year,
+    major: user.major,
+    // Instructor fields
+    department: user.department,
+    expertise: user.expertise,
+    office: user.office
+  });
 });
 
 // @desc    Update user profile
@@ -27,7 +48,8 @@ const updateProfile = asyncHandler(async (req, res) => {
   }
 
   // Update fields
-  const { name, bio, skills, interests, achievements, title, experience, projects, profileImage } = req.body;
+  const { name, bio, skills, interests, achievements, title, experience, projects, profileImage,
+    education, year, major, department, expertise, office } = req.body;
   
   if (name) user.name = name;
   if (bio) user.bio = bio;
@@ -49,11 +71,23 @@ const updateProfile = asyncHandler(async (req, res) => {
     user.profileImage = profileImage;
   }
 
+  // Student-specific fields
+  if (education !== undefined) user.education = education;
+  if (year !== undefined) user.year = year;
+  if (major !== undefined) user.major = major;
+
+  // Instructor-specific fields
+  if (department !== undefined) user.department = department;
+  if (expertise) {
+    user.expertise = Array.isArray(expertise) ? expertise : expertise.split(',').map(e => e.trim());
+  }
+  if (office !== undefined) user.office = office;
+
   try {
     // Save the updated user
     const updatedUser = await user.save();
 
-    // Return the updated user data
+    // Return the updated user data (all relevant fields)
     res.json({
       _id: updatedUser._id,
       name: updatedUser.name,
@@ -65,7 +99,16 @@ const updateProfile = asyncHandler(async (req, res) => {
       achievements: updatedUser.achievements,
       experience: updatedUser.experience,
       projects: updatedUser.projects,
-      profileImage: updatedUser.profileImage
+      profileImage: updatedUser.profileImage,
+      role: updatedUser.role,
+      // Student fields
+      education: updatedUser.education,
+      year: updatedUser.year,
+      major: updatedUser.major,
+      // Instructor fields
+      department: updatedUser.department,
+      expertise: updatedUser.expertise,
+      office: updatedUser.office
     });
   } catch (error) {
     console.error('Error updating profile:', error);

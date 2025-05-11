@@ -5,11 +5,18 @@ import { FaUser, FaCode, FaLightbulb } from 'react-icons/fa';
 import './ProfileSetup.css';
 
 const ProfileSetup = () => {
+  const userRole = localStorage.getItem('userRole');
   const [formData, setFormData] = useState({
     name: '',
     skills: '',
     interests: '',
-    bio: ''
+    bio: '',
+    education: '',
+    year: '',
+    major: '',
+    department: '',
+    expertise: '',
+    office: ''
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -35,10 +42,19 @@ const ProfileSetup = () => {
       const token = localStorage.getItem('token');
       const profileData = {
         name: formData.name,
-        skills: formData.skills.split(',').map(s => s.trim()).filter(s => s), // Convert to array and remove empty
-        interests: formData.interests.split(',').map(s => s.trim()).filter(s => s), // Convert to array and remove empty
+        skills: formData.skills.split(',').map(s => s.trim()).filter(s => s),
+        interests: formData.interests.split(',').map(s => s.trim()).filter(s => s),
         bio: formData.bio
       };
+      if (userRole === 'student') {
+        profileData.education = formData.education;
+        profileData.year = formData.year;
+        profileData.major = formData.major;
+      } else if (userRole === 'instructor') {
+        profileData.department = formData.department;
+        profileData.expertise = formData.expertise.split(',').map(e => e.trim()).filter(e => e);
+        profileData.office = formData.office;
+      }
 
       const response = await fetch('http://localhost:5000/api/profile', {
         method: 'PUT',
@@ -143,6 +159,81 @@ const ProfileSetup = () => {
               className="auth-input"
             />
           </Form.Group>
+
+          {userRole === 'student' && (
+            <>
+              <Form.Group className="form-group">
+                <Form.Label>Education</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="education"
+                  placeholder="Your education (e.g. BSc Computer Science)"
+                  value={formData.education}
+                  onChange={handleChange}
+                  className="auth-input"
+                />
+              </Form.Group>
+              <Form.Group className="form-group">
+                <Form.Label>Year</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="year"
+                  placeholder="Year (e.g. 2nd Year)"
+                  value={formData.year}
+                  onChange={handleChange}
+                  className="auth-input"
+                />
+              </Form.Group>
+              <Form.Group className="form-group">
+                <Form.Label>Major</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="major"
+                  placeholder="Major (e.g. Computer Science)"
+                  value={formData.major}
+                  onChange={handleChange}
+                  className="auth-input"
+                />
+              </Form.Group>
+            </>
+          )}
+          {userRole === 'instructor' && (
+            <>
+              <Form.Group className="form-group">
+                <Form.Label>Department</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="department"
+                  placeholder="Department (e.g. Computer Science)"
+                  value={formData.department}
+                  onChange={handleChange}
+                  className="auth-input"
+                />
+              </Form.Group>
+              <Form.Group className="form-group">
+                <Form.Label>Expertise</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="expertise"
+                  placeholder="Expertise (comma-separated, e.g. AI, ML, Web Dev)"
+                  value={formData.expertise}
+                  onChange={handleChange}
+                  className="auth-input"
+                />
+              </Form.Group>
+              <Form.Group className="form-group">
+                <Form.Label>Office</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="office"
+                  placeholder="Office (e.g. Room 101)"
+                  value={formData.office}
+                  onChange={handleChange}
+                  className="auth-input"
+                />
+              </Form.Group>
+            </>
+          )}
 
           <Button type="submit" className="auth-button">
             Save Profile

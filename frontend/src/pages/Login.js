@@ -42,14 +42,10 @@ const Login = () => {
         localStorage.setItem('token', data.token);
         localStorage.setItem('userRole', data.role);
         localStorage.setItem('userName', data.name);
-        localStorage.setItem('userId', data.id);
+        localStorage.setItem('userId', data._id);
 
-        // Redirect based on role
-        if (data.role === 'instructor') {
-          navigate('/instructor');
-        } else {
-          navigate('/student');
-        }
+        // Redirect to home page
+        navigate('/home');
       } else {
         setError(data.message || 'Login failed');
       }
@@ -78,7 +74,7 @@ const Login = () => {
                   </Alert>
                 )}
 
-                <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit}>
                   <Row>
                     <Col lg={12}>
                       <Form.Group className="mb-4">
@@ -89,30 +85,30 @@ const Login = () => {
                               <FaEnvelope />
                             </span>
                           </div>
-                          <Form.Control
-                            type="email"
+            <Form.Control
+              type="email"
                             name="email"
                             value={formData.email}
                             onChange={handleChange}
                             placeholder="Enter your email"
                             required
                             size="lg"
-                          />
+            />
                         </div>
-                      </Form.Group>
+          </Form.Group>
                     </Col>
 
                     <Col lg={12}>
                       <Form.Group className="mb-4">
-                        <Form.Label>Password</Form.Label>
+            <Form.Label>Password</Form.Label>
                         <div className="input-group input-group-lg">
                           <div className="input-group-prepend">
                             <span className="input-group-text">
                               <FaLock />
                             </span>
                           </div>
-                          <Form.Control
-                            type="password"
+            <Form.Control
+              type="password"
                             name="password"
                             value={formData.password}
                             onChange={handleChange}
@@ -145,7 +141,7 @@ const Login = () => {
                             Instructor
                           </Button>
                         </div>
-                      </Form.Group>
+          </Form.Group>
                     </Col>
 
                     <Col lg={12}>
@@ -157,7 +153,7 @@ const Login = () => {
                         disabled={loading}
                       >
                         {loading ? 'Logging in...' : 'Login'}
-                      </Button>
+          </Button>
                     </Col>
 
                     <Col lg={12} className="text-center">
@@ -169,7 +165,7 @@ const Login = () => {
                       </p>
                     </Col>
                   </Row>
-                </Form>
+        </Form>
               </Card.Body>
             </Card>
           </Col>
